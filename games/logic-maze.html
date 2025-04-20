@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Logic Maze</title>
+    <link rel="stylesheet" href="../styles.css" />
+    <style>
+        .maze-container {
+            max-width: 400px;
+            margin: 2rem auto;
+            text-align: center;
+        }
+        #maze {
+            display: grid;
+            grid-template-columns: repeat(6, 50px);
+            grid-template-rows: repeat(6, 50px);
+            gap: 2px;
+            margin: 1rem auto;
+        }
+        .cell {
+            width: 50px;
+            height: 50px;
+            border: 2px solid #4caf50;
+            box-sizing: border-box;
+        }
+        .wall {
+            background-color: #4caf50;
+        }
+        .path {
+            background-color: #fff;
+        }
+        .player {
+            background-color: #2196f3;
+        }
+        .goal {
+            background-color: #ffeb3b;
+        }
+        #message {
+            font-weight: bold;
+            color: #4caf50;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Logic Maze</h1>
+        <a href="../age8-9.html" class="back-link">← Back to Games</a>
+    </header>
+    <main class="maze-container">
+        <p>Use arrow keys to navigate the blue square to the yellow goal.</p>
+        <div id="maze"></div>
+        <div id="message"></div>
+    </main>
+    <script>
+        const mazeElement = document.getElementById('maze');
+        const message = document.getElementById('message');
+
+        // 0 = path, 1 = wall, 2 = goal
+        const maze = [
+            [1,1,1,1,1,1],
+            [1,0,0,0,0,1],
+            [1,0,1,1,0,1],
+            [1,0,1,0,0,1],
+            [1,0,0,0,2,1],
+            [1,1,1,1,1,1]
+        ];
+
+        let playerPos = { x: 1, y: 1 };
+
+        function drawMaze() {
+            mazeElement.innerHTML = '';
+            for (let y = 0; y < maze.length; y++) {
+                for (let x = 0; x < maze[y].length; x++) {
+                    const cell = document.createElement('div');
+                    cell.classList.add('cell');
+                    if (maze[y][x] === 1) {
+                        cell.classList.add('wall');
+                    } else if (maze[y][x] === 2) {
+                        cell.classList.add('goal');
+                    } else {
+                        cell.classList.add('path');
+                    }
+                    if (playerPos.x === x && playerPos.y === y) {
+                        cell.classList.add('player');
+                    }
+                    mazeElement.appendChild(cell);
+                }
+            }
+        }
+
+        function movePlayer(dx, dy) {
+            const newX = playerPos.x + dx;
+            const newY = playerPos.y + dy;
+            if (maze[newY][newX] !== 1) {
+                playerPos = { x: newX, y: newY };
+                drawMaze();
+                if (maze[newY][newX] === 2) {
+                    message.textContent = 'Congratulations! You reached the goal!';
+                    window.removeEventListener('keydown', handleKeyDown);
+                }
+            }
+        }
+
+        function handleKeyDown(e) {
+            switch(e.key) {
+                case 'ArrowUp':
+                    movePlayer(0, -1);
+                    break;
+                case 'ArrowDown':
+                    movePlayer(0, 1);
+                    break;
+                case 'ArrowLeft':
+                    movePlayer(-1, 0);
+                    break;
+                case 'ArrowRight':
+                    movePlayer(1, 0);
+                    break;
+            }
+        }
+
+        window.addEventListener('keydown', handleKeyDown);
+
+        drawMaze();
+    </script>
+</body>
+</html>

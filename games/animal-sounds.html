@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Animal Sounds</title>
+    <link rel="stylesheet" href="../styles.css" />
+    <style>
+        .animal-container {
+            max-width: 600px;
+            margin: 2rem auto;
+            text-align: center;
+        }
+        .animal-button {
+            margin: 0.5rem;
+            padding: 1rem 2rem;
+            font-size: 1.2rem;
+            border-radius: 12px;
+            border: 3px solid #4caf50;
+            background-color: white;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .animal-button:hover {
+            background-color: #4caf50;
+            color: white;
+        }
+        #message {
+            margin-top: 1rem;
+            font-weight: bold;
+            color: #4caf50;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Animal Sounds</h1>
+        <a href="../age3-5.html" class="back-link">← Back to Games</a>
+    </header>
+    <main class="animal-container">
+        <p>Click the button to hear an animal sound, then select the correct animal.</p>
+        <button id="playSoundBtn">Play Sound</button>
+        <div id="options" style="margin-top: 1rem;">
+            <button class="animal-button" data-animal="cat">Cat</button>
+            <button class="animal-button" data-animal="dog">Dog</button>
+            <button class="animal-button" data-animal="cow">Cow</button>
+            <button class="animal-button" data-animal="sheep">Sheep</button>
+            <button class="animal-button" data-animal="duck">Duck</button>
+        </div>
+        <div id="message"></div>
+        <button id="resetBtn">Reset</button>
+    </main>
+    <script>
+        const sounds = {
+            cat: new Audio('https://www.soundjay.com/animal/cat-meow-1.mp3'),
+            dog: new Audio('https://www.soundjay.com/animal/dog-bark-1.mp3'),
+            cow: new Audio('https://www.soundjay.com/animal/cow-moo1.mp3'),
+            sheep: new Audio('https://www.soundjay.com/animal/sheep-bleating-1.mp3'),
+            duck: new Audio('https://www.soundjay.com/animal/duck-quack-1.mp3')
+        };
+
+        const playSoundBtn = document.getElementById('playSoundBtn');
+        const options = document.querySelectorAll('.animal-button');
+        const message = document.getElementById('message');
+        const resetBtn = document.getElementById('resetBtn');
+
+        let currentAnimal = null;
+
+        function playRandomSound() {
+            const animals = Object.keys(sounds);
+            currentAnimal = animals[Math.floor(Math.random() * animals.length)];
+            sounds[currentAnimal].play();
+            message.textContent = 'Listen carefully and select the correct animal.';
+        }
+
+        playSoundBtn.addEventListener('click', playRandomSound);
+
+        options.forEach(button => {
+            button.addEventListener('click', () => {
+                if (!currentAnimal) {
+                    message.textContent = 'Please play a sound first!';
+                    return;
+                }
+                if (button.getAttribute('data-animal') === currentAnimal) {
+                    message.textContent = 'Correct! Well done!';
+                } else {
+                    message.textContent = 'Try again!';
+                }
+            });
+        });
+
+        resetBtn.addEventListener('click', () => {
+            currentAnimal = null;
+            message.textContent = '';
+        });
+    </script>
+</body>
+</html>

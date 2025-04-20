@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Color Splash</title>
+    <link rel="stylesheet" href="../styles.css" />
+    <style>
+        .color-palette {
+            display: flex;
+            justify-content: center;
+            margin: 1rem 0;
+        }
+        .color-swatch {
+            width: 50px;
+            height: 50px;
+            margin: 0 0.5rem;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 3px solid transparent;
+            transition: border-color 0.3s ease;
+        }
+        .color-swatch.selected {
+            border-color: #4caf50;
+        }
+        .paintable {
+            width: 100px;
+            height: 100px;
+            margin: 1rem;
+            border: 3px solid #4caf50;
+            border-radius: 12px;
+            display: inline-block;
+            background-color: #eee;
+            cursor: pointer;
+        }
+        #message {
+            margin-top: 1rem;
+            font-weight: bold;
+            color: #4caf50;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Color Splash</h1>
+        <a href="../age3-5.html" class="back-link">← Back to Games</a>
+    </header>
+    <main>
+        <p>Select a color and click on the objects to paint them.</p>
+        <div class="color-palette" id="palette">
+            <div class="color-swatch" style="background-color: red;" data-color="red"></div>
+            <div class="color-swatch" style="background-color: blue;" data-color="blue"></div>
+            <div class="color-swatch" style="background-color: yellow;" data-color="yellow"></div>
+            <div class="color-swatch" style="background-color: green;" data-color="green"></div>
+            <div class="color-swatch" style="background-color: orange;" data-color="orange"></div>
+        </div>
+        <div>
+            <div class="paintable" data-color="red"></div>
+            <div class="paintable" data-color="blue"></div>
+            <div class="paintable" data-color="yellow"></div>
+            <div class="paintable" data-color="green"></div>
+            <div class="paintable" data-color="orange"></div>
+        </div>
+        <div id="message"></div>
+        <button id="resetBtn">Reset</button>
+    </main>
+    <script>
+        const palette = document.getElementById('palette');
+        const paintables = document.querySelectorAll('.paintable');
+        const message = document.getElementById('message');
+        let selectedColor = null;
+
+        palette.addEventListener('click', e => {
+            if (e.target.classList.contains('color-swatch')) {
+                palette.querySelectorAll('.color-swatch').forEach(swatch => swatch.classList.remove('selected'));
+                e.target.classList.add('selected');
+                selectedColor = e.target.getAttribute('data-color');
+                message.textContent = `Selected color: ${selectedColor}`;
+            }
+        });
+
+        paintables.forEach(paintable => {
+            paintable.addEventListener('click', () => {
+                if (!selectedColor) {
+                    message.textContent = 'Please select a color first!';
+                    return;
+                }
+                const correctColor = paintable.getAttribute('data-color');
+                if (selectedColor === correctColor) {
+                    paintable.style.backgroundColor = selectedColor;
+                    message.textContent = 'Great job! You painted it correctly!';
+                } else {
+                    message.textContent = 'Oops! Try a different color.';
+                }
+            });
+        });
+
+        document.getElementById('resetBtn').addEventListener('click', () => {
+            paintables.forEach(paintable => {
+                paintable.style.backgroundColor = '#eee';
+            });
+            message.textContent = '';
+            palette.querySelectorAll('.color-swatch').forEach(swatch => swatch.classList.remove('selected'));
+            selectedColor = null;
+        });
+    </script>
+</body>
+</html>

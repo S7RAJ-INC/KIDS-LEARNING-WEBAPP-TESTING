@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Sorting Challenge</title>
+    <link rel="stylesheet" href="../styles.css" />
+    <style>
+        .sorting-container {
+            max-width: 700px;
+            margin: 2rem auto;
+            text-align: center;
+        }
+        .items {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 1rem 0;
+        }
+        .item {
+            width: 80px;
+            height: 80px;
+            margin: 0.5rem;
+            border-radius: 12px;
+            cursor: grab;
+            user-select: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: white;
+        }
+        .small { width: 50px; height: 50px; }
+        .medium { width: 80px; height: 80px; }
+        .large { width: 110px; height: 110px; }
+        .red { background-color: #f44336; }
+        .blue { background-color: #2196f3; }
+        .green { background-color: #4caf50; }
+        .yellow { background-color: #ffeb3b; color: black; }
+        .circle { border-radius: 50%; }
+        .square { }
+        .triangle {
+            width: 0;
+            height: 0;
+            border-left: 40px solid transparent;
+            border-right: 40px solid transparent;
+            border-bottom: 80px solid;
+            background-color: transparent !important;
+            color: transparent !important;
+        }
+        .dropzone {
+            border: 3px dashed #4caf50;
+            border-radius: 12px;
+            min-height: 120px;
+            margin: 1rem;
+            padding: 1rem;
+            flex: 1 1 200px;
+        }
+        .dropzone h3 {
+            margin-top: 0;
+        }
+        #message {
+            margin-top: 1rem;
+            font-weight: bold;
+            color: #4caf50;
+        }
+        button {
+            margin-top: 1rem;
+            padding: 0.5rem 1rem;
+            font-size: 1rem;
+            border: none;
+            border-radius: 8px;
+            background-color: #4caf50;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Sorting Challenge</h1>
+        <a href="../age6-7.html" class="back-link">← Back to Games</a>
+    </header>
+    <main class="sorting-container">
+        <p>Drag and drop the items into the correct category.</p>
+        <div style="display: flex; justify-content: space-around; flex-wrap: wrap;">
+            <div class="dropzone" id="sizeZone">
+                <h3>Sort by Size</h3>
+                <div id="sizeSmall" class="dropzone"></div>
+                <div id="sizeMedium" class="dropzone"></div>
+                <div id="sizeLarge" class="dropzone"></div>
+            </div>
+            <div class="dropzone" id="colorZone">
+                <h3>Sort by Color</h3>
+                <div id="colorRed" class="dropzone"></div>
+                <div id="colorBlue" class="dropzone"></div>
+                <div id="colorGreen" class="dropzone"></div>
+                <div id="colorYellow" class="dropzone"></div>
+            </div>
+            <div class="dropzone" id="shapeZone">
+                <h3>Sort by Shape</h3>
+                <div id="shapeCircle" class="dropzone"></div>
+                <div id="shapeSquare" class="dropzone"></div>
+                <div id="shapeTriangle" class="dropzone"></div>
+            </div>
+        </div>
+        <div class="items" id="items"></div>
+        <div id="message"></div>
+        <button id="resetBtn">Reset</button>
+    </main>
+    <script>
+        const itemsContainer = document.getElementById('items');
+        const message = document.getElementById('message');
+        const resetBtn = document.getElementById('resetBtn');
+
+        const itemsData = [
+            { id: 1, size: 'small', color: 'red', shape: 'circle', label: 'Small Red Circle' },
+            { id: 2, size: 'medium', color: 'blue', shape: 'square', label: 'Medium Blue Square' },
+            { id: 3, size: 'large', color: 'green', shape: 'triangle', label: 'Large Green Triangle' },
+            { id: 4, size: 'small', color: 'yellow', shape: 'square', label: 'Small Yellow Square' },
+            { id: 5, size: 'medium', color: 'red', shape: 'triangle', label: 'Medium Red Triangle' },
+            { id: 6, size: 'large', color: 'blue', shape: 'circle', label: 'Large Blue Circle' }
+        ];
+
+        function createItems() {
+            itemsContainer.innerHTML = '';
+            itemsData.forEach(item => {
+                const div = document.createElement('div');
+                div.classList.add('item', item.size, item.color);
+                if (item.shape === 'circle') {
+                    div.classList.add('circle');
+                } else if (item.shape === 'square') {
+                    div.classList.add('square');
+                } else if (item.shape === 'triangle') {
+                    div.classList.add('triangle');
+                    div.style.borderBottomColor = getComputedStyle(div).backgroundColor;
+                }
+                div.textContent = item.label;
+                div.setAttribute('draggable', 'true');
+                div.dataset.id = item.id;
+                div.dataset.size = item.size;
+                div.dataset.color = item.color;
+                div.dataset.shape = item.shape;
+                div.addEventListener('dragstart', dragStart);
+                itemsContainer.appendChild(div);
+            });
+        }
+
+        const dropzones = document.querySelectorAll('.dropzone');
+
+        dropzones.forEach(zone => {
+            zone.addEventListener('dragover', dragOver);
+            zone.addEventListener('drop', drop);
+        });
+
+        let draggedItem = null;
+
+        function dragStart(e) {
+            draggedItem = e.target;
+        }
+
+        function dragOver(e) {
+            e.preventDefault();
+        }
+
+        function drop(e) {
+            e.preventDefault();
+            if (!draggedItem) return;
+            if (e.target.classList.contains('dropzone')) {
+                e.target.appendChild(draggedItem);
+                checkCompletion();
+            }
+        }
+
+        function checkCompletion() {
+            // Check if all items are sorted correctly
+            let allCorrect = true;
+            itemsData.forEach(item => {
+                const itemDiv = document.querySelector(`.item[data-id="${item.id}"]`);
+                if (!itemDiv) {
+                    allCorrect = false;
+                    return;
+                }
+                const parentId = itemDiv.parentElement.id;
+                if (
+                    !(
+                        parentId === 'size' + capitalize(item.size) ||
+                        parentId === 'color' + capitalize(item.color) ||
+                        parentId === 'shape' + capitalize(item.shape)
+                    )
+                ) {
+                    allCorrect = false;
+                }
+            });
+            if (allCorrect) {
+                message.textContent = 'Great job! You sorted all items correctly!';
+            } else {
+                message.textContent = '';
+            }
+        }
+
+        function capitalize(str) {
+            return str.charAt(0).toUpperCase() + str.slice(1);
+        }
+
+        resetBtn.addEventListener('click', () => {
+            message.textContent = '';
+            createItems();
+            // Clear dropzones
+            document.querySelectorAll('.dropzone').forEach(zone => {
+                zone.innerHTML = zone.querySelector('h3') ? zone.querySelector('h3').outerHTML : '';
+            });
+        });
+
+        createItems();
+    </script>
+</body>
+</html>

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Logic Puzzles</title>
+    <link rel="stylesheet" href="../styles.css" />
+    <style>
+        .puzzle-container {
+            max-width: 600px;
+            margin: 2rem auto;
+            text-align: center;
+        }
+        .puzzle {
+            margin: 1rem 0;
+            font-size: 1.2rem;
+        }
+        input[type="text"] {
+            font-size: 1rem;
+            padding: 0.3rem;
+            width: 200px;
+            border-radius: 8px;
+            border: 2px solid #4caf50;
+            text-align: center;
+        }
+        button {
+            margin-top: 1rem;
+            padding: 0.5rem 1rem;
+            font-size: 1rem;
+            border: none;
+            border-radius: 8px;
+            background-color: #4caf50;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #message {
+            margin-top: 1rem;
+            font-weight: bold;
+            color: #4caf50;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Logic Puzzles</h1>
+        <a href="../age6-7.html" class="back-link">← Back to Games</a>
+    </header>
+    <main class="puzzle-container">
+        <p>Solve the puzzle below:</p>
+        <div class="puzzle" id="puzzleText"></div>
+        <input type="text" id="answer" placeholder="Your answer" />
+        <br />
+        <button id="checkBtn">Check Answer</button>
+        <div id="message"></div>
+        <button id="newPuzzleBtn" style="display:none;">New Puzzle</button>
+    </main>
+    <script>
+        const puzzles = [
+            { question: "What comes next in the sequence: 2, 4, 6, ?", answer: "8" },
+            { question: "I am a number between 1 and 5. I am odd. What number am I?", answer: "3" },
+            { question: "If you have 3 apples and get 2 more, how many apples do you have?", answer: "5" }
+        ];
+
+        const puzzleText = document.getElementById('puzzleText');
+        const answerInput = document.getElementById('answer');
+        const checkBtn = document.getElementById('checkBtn');
+        const message = document.getElementById('message');
+        const newPuzzleBtn = document.getElementById('newPuzzleBtn');
+
+        let currentPuzzleIndex = 0;
+
+        function loadPuzzle() {
+            const puzzle = puzzles[currentPuzzleIndex];
+            puzzleText.textContent = puzzle.question;
+            answerInput.value = '';
+            message.textContent = '';
+            checkBtn.style.display = 'inline-block';
+            newPuzzleBtn.style.display = 'none';
+        }
+
+        checkBtn.addEventListener('click', () => {
+            const userAnswer = answerInput.value.trim().toLowerCase();
+            const correctAnswer = puzzles[currentPuzzleIndex].answer.toLowerCase();
+            if (userAnswer === correctAnswer) {
+                message.textContent = 'Correct! Well done!';
+                checkBtn.style.display = 'none';
+                newPuzzleBtn.style.display = 'inline-block';
+            } else {
+                message.textContent = 'Incorrect, try again.';
+            }
+        });
+
+        newPuzzleBtn.addEventListener('click', () => {
+            currentPuzzleIndex = (currentPuzzleIndex + 1) % puzzles.length;
+            loadPuzzle();
+        });
+
+        loadPuzzle();
+    </script>
+</body>
+</html>

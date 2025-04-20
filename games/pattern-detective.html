@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Pattern Detective</title>
+    <link rel="stylesheet" href="../styles.css" />
+    <style>
+        .pattern-container {
+            max-width: 600px;
+            margin: 2rem auto;
+            text-align: center;
+        }
+        .pattern {
+            display: flex;
+            justify-content: center;
+            margin: 1rem 0;
+        }
+        .block {
+            width: 60px;
+            height: 60px;
+            margin: 0 0.5rem;
+            border-radius: 12px;
+            cursor: pointer;
+            user-select: none;
+            border: 3px solid transparent;
+            transition: border-color 0.3s ease;
+        }
+        .block.red { background-color: #f44336; }
+        .block.blue { background-color: #2196f3; }
+        .block.yellow { background-color: #ffeb3b; }
+        .block.green { background-color: #4caf50; }
+        .block.orange { background-color: #ff9800; }
+        .block.selected {
+            border-color: #000;
+        }
+        #message {
+            font-weight: bold;
+            color: #4caf50;
+            margin-top: 1rem;
+        }
+        button {
+            margin-top: 1rem;
+            padding: 0.5rem 1rem;
+            font-size: 1rem;
+            border: none;
+            border-radius: 8px;
+            background-color: #4caf50;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Pattern Detective</h1>
+        <a href="../age6-7.html" class="back-link">← Back to Games</a>
+    </header>
+    <main class="pattern-container">
+        <p>Complete the pattern by selecting the correct color block.</p>
+        <div class="pattern" id="pattern"></div>
+        <div id="message"></div>
+        <button id="resetBtn">Reset</button>
+    </main>
+    <script>
+        const patternContainer = document.getElementById('pattern');
+        const message = document.getElementById('message');
+        const resetBtn = document.getElementById('resetBtn');
+
+        // Pattern to complete: red, blue, green, red, blue, ?
+        const patternSequence = ['red', 'blue', 'green', 'red', 'blue', null];
+        const options = ['red', 'blue', 'yellow', 'green', 'orange'];
+
+        function createPattern() {
+            patternContainer.innerHTML = '';
+            patternSequence.forEach((color, index) => {
+                const block = document.createElement('div');
+                block.className = 'block';
+                if (color) {
+                    block.classList.add(color);
+                } else {
+                    block.classList.add('yellow'); // default color for selection
+                    block.setAttribute('id', 'selectable-block');
+                    block.addEventListener('click', () => {
+                        showOptions(block);
+                    });
+                }
+                patternContainer.appendChild(block);
+            });
+        }
+
+        function showOptions(block) {
+            message.textContent = 'Select the correct color to complete the pattern.';
+            const optionsContainer = document.createElement('div');
+            optionsContainer.style.marginTop = '1rem';
+            options.forEach(color => {
+                const optionBlock = document.createElement('div');
+                optionBlock.className = 'block ' + color;
+                optionBlock.style.display = 'inline-block';
+                optionBlock.style.margin = '0 0.5rem';
+                optionBlock.style.cursor = 'pointer';
+                optionBlock.addEventListener('click', () => {
+                    if (color === 'green') {
+                        block.className = 'block green';
+                        message.textContent = 'Correct! You completed the pattern.';
+                    } else {
+                        message.textContent = 'Try again!';
+                    }
+                    optionsContainer.remove();
+                });
+                optionsContainer.appendChild(optionBlock);
+            });
+            block.after(optionsContainer);
+        }
+
+        resetBtn.addEventListener('click', () => {
+            message.textContent = '';
+            createPattern();
+        });
+
+        createPattern();
+    </script>
+</body>
+</html>

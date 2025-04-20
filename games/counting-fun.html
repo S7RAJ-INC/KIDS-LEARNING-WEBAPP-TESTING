@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Counting Fun</title>
+    <link rel="stylesheet" href="../styles.css" />
+    <style>
+        .count-container {
+            max-width: 600px;
+            margin: 2rem auto;
+            text-align: center;
+        }
+        .objects {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 1rem 0;
+        }
+        .object {
+            width: 60px;
+            height: 60px;
+            margin: 0.5rem;
+            background-color: #ffcc00;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.5rem;
+            cursor: pointer;
+            user-select: none;
+        }
+        #countDisplay {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #4caf50;
+            margin-top: 1rem;
+        }
+        button {
+            margin-top: 1rem;
+            padding: 0.5rem 1rem;
+            font-size: 1rem;
+            border: none;
+            border-radius: 8px;
+            background-color: #4caf50;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Counting Fun</h1>
+        <a href="../age3-5.html" class="back-link">← Back to Games</a>
+    </header>
+    <main class="count-container">
+        <p>Click on the objects to count them. Try to count all 10!</p>
+        <div class="objects" id="objects"></div>
+        <div id="countDisplay">Count: 0</div>
+        <button id="resetBtn">Reset</button>
+    </main>
+    <script>
+        const objectsContainer = document.getElementById('objects');
+        const countDisplay = document.getElementById('countDisplay');
+        const resetBtn = document.getElementById('resetBtn');
+        let count = 0;
+
+        function createObjects() {
+            objectsContainer.innerHTML = '';
+            for (let i = 1; i <= 10; i++) {
+                const obj = document.createElement('div');
+                obj.className = 'object';
+                obj.textContent = i;
+                obj.addEventListener('click', () => {
+                    if (!obj.classList.contains('counted')) {
+                        obj.classList.add('counted');
+                        count++;
+                        countDisplay.textContent = `Count: ${count}`;
+                        if (count === 10) {
+                            countDisplay.textContent = 'Great job! You counted all 10 objects!';
+                        }
+                    }
+                });
+                objectsContainer.appendChild(obj);
+            }
+        }
+
+        resetBtn.addEventListener('click', () => {
+            count = 0;
+            countDisplay.textContent = 'Count: 0';
+            createObjects();
+        });
+
+        createObjects();
+    </script>
+</body>
+</html>

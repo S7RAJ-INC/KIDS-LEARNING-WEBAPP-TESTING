@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Shape Matcher</title>
+    <link rel="stylesheet" href="../styles.css" />
+    <style>
+        .shapes-container {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 2rem;
+        }
+        .shape {
+            width: 100px;
+            height: 100px;
+            margin: 1rem;
+            border: 3px solid #4caf50;
+            border-radius: 10px;
+            cursor: grab;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+            user-select: none;
+        }
+        .circle {
+            border-radius: 50%;
+            background-color: #ffcc00;
+        }
+        .square {
+            background-color: #00bcd4;
+        }
+        .triangle {
+            width: 0;
+            height: 0;
+            border-left: 50px solid transparent;
+            border-right: 50px solid transparent;
+            border-bottom: 100px solid #ff5722;
+            background-color: transparent;
+            border-radius: 0;
+            cursor: grab;
+        }
+        .dropzone {
+            width: 100px;
+            height: 100px;
+            margin: 1rem;
+            border: 3px dashed #4caf50;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .dropzone.circle {
+            border-radius: 50%;
+        }
+        .dropzone.triangle {
+            border: 3px dashed #ff5722;
+            width: 0;
+            height: 0;
+            border-left: 50px solid transparent;
+            border-right: 50px solid transparent;
+            border-bottom: 100px solid transparent;
+            position: relative;
+        }
+        .dropzone.triangle::after {
+            content: '';
+            position: absolute;
+            top: -100px;
+            left: -50px;
+            width: 0;
+            height: 0;
+            border-left: 50px solid transparent;
+            border-right: 50px solid transparent;
+            border-bottom: 100px solid #4caf50;
+        }
+        #result {
+            margin-top: 2rem;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #4caf50;
+        }
+        button {
+            margin-top: 1rem;
+            padding: 0.5rem 1rem;
+            font-size: 1rem;
+            border: none;
+            border-radius: 8px;
+            background-color: #4caf50;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Shape Matcher</h1>
+        <a href="../age3-5.html" class="back-link">← Back to Games</a>
+    </header>
+    <main>
+        <p>Drag the shapes to their matching outlines.</p>
+        <div class="shapes-container" id="shapes">
+            <div class="shape circle" draggable="true" id="circle">Circle</div>
+            <div class="shape square" draggable="true" id="square">Square</div>
+            <div class="shape triangle" draggable="true" id="triangle"></div>
+        </div>
+        <div class="shapes-container" id="dropzones">
+            <div class="dropzone circle" data-shape="circle"></div>
+            <div class="dropzone square" data-shape="square"></div>
+            <div class="dropzone triangle" data-shape="triangle"></div>
+        </div>
+        <div id="result"></div>
+        <button id="resetBtn">Reset</button>
+    </main>
+    <script>
+        const shapes = document.querySelectorAll('.shape');
+        const dropzones = document.querySelectorAll('.dropzone');
+        const result = document.getElementById('result');
+        let matchedCount = 0;
+
+        shapes.forEach(shape => {
+            shape.addEventListener('dragstart', dragStart);
+        });
+
+        dropzones.forEach(zone => {
+            zone.addEventListener('dragover', dragOver);
+            zone.addEventListener('drop', drop);
+        });
+
+        function dragStart(e) {
+            e.dataTransfer.setData('text/plain', e.target.id);
+        }
+
+        function dragOver(e) {
+            e.preventDefault();
+        }
+
+        function drop(e) {
+            e.preventDefault();
+            const shapeId = e.dataTransfer.getData('text/plain');
+            const draggedShape = document.getElementById(shapeId);
+            const dropzoneShape = e.target.getAttribute('data-shape');
+
+            if (shapeId === dropzoneShape) {
+                e.target.appendChild(draggedShape);
+                draggedShape.setAttribute('draggable', 'false');
+                matchedCount++;
+                if (matchedCount === shapes.length) {
+                    result.textContent = 'Great job! You matched all the shapes!';
+                }
+            } else {
+                result.textContent = 'Try again!';
+                setTimeout(() => {
+                    result.textContent = '';
+                }, 1500);
+            }
+        }
+
+        document.getElementById('resetBtn').addEventListener('click', () => {
+            matchedCount = 0;
+            result.textContent = '';
+            const shapesContainer = document.getElementById('shapes');
+            shapesContainer.innerHTML = '';
+            ['circle', 'square', 'triangle'].forEach(shape => {
+                const div = document.createElement('div');
+                div.className = 'shape ' + shape;
+                div.id = shape;
+                div.textContent = shape === 'triangle' ? '' : shape.charAt(0).toUpperCase() + shape.slice(1);
+                div.setAttribute('draggable', 'true');
+                shapesContainer.appendChild(div);
+                div.addEventListener('dragstart', dragStart);
+            });
+        });
+    </script>
+</body>
+</html>

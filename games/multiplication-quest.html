@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Multiplication Quest</title>
+    <link rel="stylesheet" href="../styles.css" />
+    <style>
+        .multiplication-container {
+            max-width: 600px;
+            margin: 2rem auto;
+            text-align: center;
+        }
+        .problem {
+            font-size: 2rem;
+            margin: 1rem 0;
+        }
+        input[type="number"] {
+            font-size: 1.5rem;
+            width: 100px;
+            padding: 0.3rem;
+            text-align: center;
+            border-radius: 8px;
+            border: 2px solid #4caf50;
+        }
+        button {
+            margin-top: 1rem;
+            padding: 0.5rem 1rem;
+            font-size: 1rem;
+            border: none;
+            border-radius: 8px;
+            background-color: #4caf50;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #message {
+            margin-top: 1rem;
+            font-weight: bold;
+            color: #4caf50;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Multiplication Quest</h1>
+        <a href="../age8-9.html" class="back-link">← Back to Games</a>
+    </header>
+    <main class="multiplication-container">
+        <p>Solve the multiplication problem below:</p>
+        <div class="problem" id="problem"></div>
+        <input type="number" id="answer" placeholder="Your answer" />
+        <br />
+        <button id="checkBtn">Check Answer</button>
+        <div id="message"></div>
+        <button id="newProblemBtn" style="display:none;">New Problem</button>
+    </main>
+    <script>
+        const problemDiv = document.getElementById('problem');
+        const answerInput = document.getElementById('answer');
+        const checkBtn = document.getElementById('checkBtn');
+        const message = document.getElementById('message');
+        const newProblemBtn = document.getElementById('newProblemBtn');
+
+        let num1, num2;
+
+        function generateProblem() {
+            num1 = Math.floor(Math.random() * 10) + 1;
+            num2 = Math.floor(Math.random() * 10) + 1;
+            problemDiv.textContent = `${num1} × ${num2} = ?`;
+            answerInput.value = '';
+            message.textContent = '';
+            checkBtn.style.display = 'inline-block';
+            newProblemBtn.style.display = 'none';
+        }
+
+        checkBtn.addEventListener('click', () => {
+            const userAnswer = parseInt(answerInput.value, 10);
+            if (isNaN(userAnswer)) {
+                message.textContent = 'Please enter a valid number.';
+                return;
+            }
+            if (userAnswer === num1 * num2) {
+                message.textContent = 'Correct! Great job!';
+                checkBtn.style.display = 'none';
+                newProblemBtn.style.display = 'inline-block';
+            } else {
+                message.textContent = 'Incorrect, try again.';
+            }
+        });
+
+        newProblemBtn.addEventListener('click', generateProblem);
+
+        generateProblem();
+    </script>
+</body>
+</html>
